@@ -8,6 +8,14 @@ namespace Ehealth.Models
         [Required]
         [Display(Name = "Email")]
         public string Email { get; set; }
+
+        [Required]
+        [Display(Name = "Driving License")]
+        public string DrivingLicense { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Phone { get; set; }
     }
 
     public class ExternalLoginListViewModel
@@ -65,6 +73,10 @@ namespace Ehealth.Models
     public class RegisterViewModel
     {
         [Required]
+        [Display(Name = "Driving License")]
+        public string DrivingLicense { get; set; }
+
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
@@ -79,10 +91,17 @@ namespace Ehealth.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Phone { get; set; }
     }
 
     public class ResetPasswordViewModel
     {
+        [Required]
+        [Display(Name = "Driving License")]
+        public string DrivingLicense { get; set; }
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
@@ -109,4 +128,5 @@ namespace Ehealth.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
     }
+
 }

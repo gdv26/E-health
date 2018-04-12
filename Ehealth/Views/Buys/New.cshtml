@@ -1,0 +1,121 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "New Buy Form";
+}
+
+<h2>New Buy Form</h2>
+
+<form id="newBuy">
+    <div class="form-group">
+        <label>User</label>
+        <div class="tt-container">
+            <input id="user" name="user" data-rule-validUser="true" required type="text" value="" class="form-control" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Program</label>
+        <div class="tt-container">
+            <input id="program" name="program" type="text" value="" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 col-sm-4">
+            <ul id="programs" class="list-group"></ul>
+        </div>
+    </div>
+
+    <button class="btn btn-primary">Submit</button>
+</form>
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+
+            var vm = {
+                programIds: []
+            };
+
+            var users = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/users?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#user').typeahead({
+                minLength: 3,
+                highlight: true
+            }, {
+                    name: 'users',
+                    display: 'name',
+                    source: users
+                }).on("typeahead:select", function (e, user) {
+                    vm.userId = user.id;
+                });
+
+            var programs = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/programs?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#program').typeahead({
+                minLength: 3,
+                highlight: true
+            }, {
+                    name: 'programs',
+                    display: 'name',
+                    source: programs
+                }).on("typeahead:select", function (e, program) {
+                    $("#programs").append("<li class='list-group-item'>" + program.name + "</li>");
+
+                    $("#program").typeahead("val", "");
+
+                    vm.programIds.push(program.id);
+                });
+
+            $.validator.addMethod("validUser", function () {
+                return vm.userId && vm.userId !== 0;
+            }, "Please select a valid user.");
+
+            $.validator.addMethod("atLeastOneProgram", function () {
+                return vm.programIds.length > 0;
+            }, "Please select at least one program.");
+
+            var validator = $("#newBuy").validate({
+                submitHandler: function(){
+                    $.ajax({
+                        url: "/api/newBuys",
+                        method: "post",
+                        data: vm
+                    })
+                        .done(function () {
+                            toastr.success("Buy successfully recorded.");
+
+                            $("#user").typeahead("val", "");
+                            $("#program").typeahead("val", "");
+                            $("#programs").empty();
+
+                            vm = { programIds: [] };
+
+                            validator.resetForm();
+                        })
+                        .fail(function () {
+                            toastr.error("Something unexpected happened.")
+                        });
+
+                    return false;
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Ehealth.Models.Article>
+
+@{
+    ViewBag.Title = "Articles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Articles</h2>
+<p>
+    @Html.ActionLink("New Article", "New", "Articles", null, new { @class = "btn btn-primary" })
+</p>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Article</th>
+            <th>Article Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var article in Model)
+        {
+            <tr>
+                <td>@Html.ActionLink(article.Name, "Edit", "Articles", new { id = article.Id }, null)</td>
+                <td>@article.ArticleType.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>

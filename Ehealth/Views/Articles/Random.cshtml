@@ -1,0 +1,31 @@
+﻿@model Ehealth.ViewModels.RandomArticleViewModel
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*
+    This is a comment
+    On multiple lines
+*@
+
+
+@{
+    var className = Model.Users.Count > 0 ? "popular" : null;
+}
+
+<h2 class="@className">@Model.Article.Name</h2>
+
+@if (Model.Users.Count == 0)
+{
+    <text>No one has rented this article before.</text>
+}
+else
+{
+    <ul>
+        @foreach (var user in Model.Users)
+        {
+            <li>@user.Name</li>
+        }
+    </ul>
+}
